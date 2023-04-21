@@ -12,6 +12,8 @@ import { SignInContext } from "../../context/authContext";
 
 export default function SignInScreen({ navigation }) {
 
+  console.log("Hello I am here")
+
   const {dispatchSignedIn} = useContext(SignInContext)
   const [textInput2Focussed, setTextInput2Focussed] = useState(false);
 
@@ -25,6 +27,8 @@ export default function SignInScreen({ navigation }) {
       if (user) {
         console.log("USER SIGNED-IN");
        dispatchSignedIn({type:"UPDATE_SIGN_IN",payload:{userToken:"signed-in"}})
+        
+
       }
     } catch (error) {
       Alert.alert(error.name, error.message);
