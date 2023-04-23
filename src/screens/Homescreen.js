@@ -17,12 +17,24 @@ import { Icon } from "@rneui/base";
 import { filterData, restaurantsData } from "../global/data";
 import FoodCard from "../components/foodCard";
 import Countdown from "react-native-countdown-component";
-
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from 'expo-secure-store';
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function HomeScreen({ navigation }) {
   const [delivery, setDelivery] = useState(true);
   const [indexCheck, setIndexCheck] = useState("0");
+
+  // useEffect(() => {
+  //   getPersistedAuth();
+  // }, []);
+
+  // const getPersistedAuth = async () => {
+  //   const jsonValue = await SecureStore.getItemAsync("userToken");
+
+  //   console.log("The value being returned from async", jsonValue);
+  // };
 
   return (
     <View style={styles.container}>

@@ -110,35 +110,39 @@ export default class PreferenceScreen extends Component {
                     <TouchableOpacity
                       key={items.id}
                       onPress={() => {
-                        const id = this.state.preference.indexOf(item);
+                        const id = this.state.preference.findIndex(
+                          (preference) => preference.id === item.id
+                        );
                         if (this.state.minimum_quantity[id] !== null) {
-                          const check = item.filter(
-                            items.checked ? items : null
-                          );
+                          const check = this.state.preference[id].filter(
+                            (i) => i.checked
+                          ).length;
                           this.state.preference[id].forEach((i) => {
                             if (i.id === items.id) {
-                              if (
-                                check.length < this.state.minimum_quantity[id]
-                              ) {
+                              if (check < this.state.minimum_quantity[id]) {
                                 i.checked = !i.checked;
                               } else {
                                 i.checked = false;
                               }
                             }
                           });
-                          this.state.counter[id] = this.state.counter[id] + 1;
                           this.setState({
                             preference: [...this.state.preference],
-                            counter: [...this.state.counter],
+                            counter: [
+                              ...this.state.counter.slice(0, id),
+                              this.state.counter[id] + 1,
+                              ...this.state.counter.slice(id + 1),
+                            ],
                           });
                         } else {
-                          this.state.preference[id].forEach((i) => {
+                          const preference = this.state.preference.slice();
+                          preference[id].forEach((i) => {
                             if (i.id === item.id) {
                               i.checked = !i.checked;
                             }
                           });
                           this.setState({
-                            preference: [...this.state.preference],
+                            preference: preference,
                           });
                         }
                       }}
@@ -154,7 +158,7 @@ export default class PreferenceScreen extends Component {
                               checkedColor={colors.buttons}
                             />
                             <Text
-                              style={{ color: colors.grey2, marginLeft: -10 }}
+                              style={{ color: colors.grey2, marginLeft: 10 }}
                             >
                               {items.name}
                             </Text>

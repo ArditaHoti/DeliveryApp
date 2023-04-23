@@ -1,36 +1,57 @@
 import { Button, Text } from "@rneui/base";
-import { React, useState, useRef , useEffect, useContext} from "react";
+import { React, useState, useRef, useEffect, useContext } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { colors, parameters, title } from "../../global/style";
 import Swiper from "react-native-swiper";
 import { SignInContext } from "../../context/authContext";
 import { auth } from "../../../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import AuthStack from "../../navigation/authNavigators";
+import { AppStack } from "../../navigation/appStack";
+import { NavigationContainer } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
+import { getAuth } from "firebase/auth";
 
-export default function SignInWelcomeScreen({navigation}) {
-  const {dispatchSignedIn} = useContext(SignInContext)
+export default function SignInWelcomeScreen({ navigation }) {
+  const { dispatchSignedIn } = useContext(SignInContext);
 
-  // useEffect(()=>{
-  //   auth().onAuthStateChanged((user)=>{
-  //   //   if(user){
-  //   //     dispatchSignedIn({type:"UPDATE_SIGN_IN",payload:{userToken:"signed-in"}})
-  //   //   }else{
-  //   //     dispatchSignedIn({type:"UPDATE_SIGN_IN",payload:{userToken:null}})
-  //   //   }
-  //   })
-    
-  // },[])
+  const auth = getAuth();
+  const user = auth.currentUser;
+  console.log("userTokenin sigeinWElcomeScreen", auth);
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        dispatchSignedIn({type:"UPDATE_SIGN_IN",payload:{userToken:"signed-in"}})
-      } else {
-       dispatchSignedIn({type:"UPDATE_SIGN_IN",payload:{userToken:null}})
-      }
-    });
-    return unsub
-  }, []);
+  // useEffect(() => {
+  //   onAuthStateChanged(auth,(user) => {
+  //     console.log("onIdTokenChanged",user);
+
+  //     if (user) {
+  // dispatchSignedIn({
+  //   type: "UPDATE_SIGN_IN",
+  //   payload: { userToken: "signed-in" },
+  // });
+
+  //     } else {
+  //       dispatchSignedIn({
+  //         type: "UPDATE_SIGN_IN",
+  //         payload: { userToken: null },
+  //       });
+  //     }
+  //   });
+  // }, []);
+  const getPersistedAuth = async () => {
+    const jsonValue = await AsyncStorage.getItem("auth");
+
+    console.log("The value being returned from", jsonValue);
+
+    if (jsonValue != null) {
+      dispatchSignedIn({
+        type: "UPDATE_SIGN_IN",
+        payload: { userToken: "signed-in" },
+      });
+    } else {
+      navigation.navigate("SignInScreen");
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -91,26 +112,28 @@ export default function SignInWelcomeScreen({navigation}) {
         </Swiper>
       </View>
 
-      <View style={{ flex: 4 , justifyContent:'flex-end', marginBottom:20}}>
+      <View style={{ flex: 4, justifyContent: "flex-end", marginBottom: 20 }}>
         <View style={{ marginHorizontal: 20, marginTop: 30 }}>
           <Button
             title="SIGN IN"
             buttonStyle={parameters.styledButton}
             titleStyle={parameters.buttonTitle}
-            onPress={() =>
-              navigation.navigate('SignInScreen')}
+            //onPress={() => navigation.navigate("SignInScreen")}
+            onPress={() => {
+              getPersistedAuth();
+            }}
           />
         </View>
-        <View style={{marginHorizontal:20, marginTop:30}}>
-        <Button
-          title={"Create an account"}
-          buttonStyle = {styles.createButton}
-          titleStyle = {styles.createButtonTitle}
-          onPress={() => {
-            navigation.navigate("SignUpScreen");
-          }}
-        />
-      </View>
+        <View style={{ marginHorizontal: 20, marginTop: 30 }}>
+          <Button
+            title={"Create an account"}
+            buttonStyle={styles.createButton}
+            titleStyle={styles.createButtonTitle}
+            onPress={() => {
+              navigation.navigate("SignUpScreen");
+            }}
+          />
+        </View>
       </View>
     </View>
   );
@@ -135,24 +158,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#92BBD9",
   },
-  createButton :{
-    backgroundColor:"#fff",
+  createButton: {
+    backgroundColor: "#fff",
     alignContent: "center",
     justifyContent: "center",
-    borderRadius:12,
-    borderWidth:1,
-    borderColor:"#ff5252",
-    height:50,
-    paddingHorizontal:20,
-    borderColor:colors.buttons
-
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#ff5252",
+    height: 50,
+    paddingHorizontal: 20,
+    borderColor: colors.buttons,
   },
-  createButtonTitle:{
+  createButtonTitle: {
     color: colors.grey1,
-    fontSize:20,
-    fontWeight:"bold",
-    alignItems:"center",
-    justifyContent: "center"
-
-  }
+    fontSize: 20,
+    fontWeight: "bold",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

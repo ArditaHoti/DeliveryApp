@@ -1,3 +1,9 @@
+
+// // Rest of the import statements
+// import { useFonts } from 'expo-font';
+// const [fontsLoaded] = useFonts({
+//   'Inter-Black': require('./assets/fonts/Inter-Black.otf'),
+// });
 export const colors = {
   buttons: "#ff5252",
   grey1: "#43484d",
@@ -62,8 +68,8 @@ export const fonts = {
     lightItalic: "Roboto-LightItalic",
     medium: "Roboto-Medium",
     mediumItalic: "Roboto-MediumItalic",
-    bold: "Roboto-Bold",
-    boldItalic: "Roboto-BoldItalic",
+    // bold: "Roboto-Bold",
+    // boldItalic: "Roboto-BoldItalic",
     condensed: "RobotoCondensed-Regular",
     condensedItalic: "RobotoCondensed-Italic",
   },

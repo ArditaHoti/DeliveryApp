@@ -8,6 +8,7 @@ import MyOrdersScreen from "../screens/myOrdersScreen";
 import MyAccountScreen from "../screens/myAccountScreen";
 import SearchScreen from "../screens/searchScreen";
 import { ClientStack } from "./ClientStack";
+import Checkout from "../screens/CheckoutScreen";
 
 const ClientTabs = createBottomTabNavigator();
 
@@ -52,7 +53,7 @@ export default function RootClientTabs() {
 
 
       <ClientTabs.Screen
-        name="MyOrderScree"
+        name="MyOrderScreen"
         component={MyOrdersScreen}
         options={{
           tabBarLabel: "My Orders",
@@ -65,6 +66,16 @@ export default function RootClientTabs() {
       <ClientTabs.Screen
         name="MyAccountScreen"
         component={MyAccountScreen}
+        options={{
+          tabBarLabel: "My Account",
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="person" type="material" color={color} size={size} />
+          ),
+        }}
+      />
+      <ClientTabs.Screen
+        name="CheckoutScreen"
+        component={Checkout}
         options={{
           tabBarLabel: "My Account",
           tabBarIcon: ({ color, size }) => (

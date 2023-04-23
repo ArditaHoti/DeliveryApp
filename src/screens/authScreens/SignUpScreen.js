@@ -32,7 +32,7 @@ const SignUpScreen = ({ navigation }) => {
     const { email, password } = values;
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword( auth,email, password);
       console.log("USER ACCOUNT CREATED");
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {

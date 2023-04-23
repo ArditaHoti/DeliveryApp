@@ -1,39 +1,55 @@
 import { Button, Icon, Text, SocialIcon, ButtonGroup } from "@rneui/base";
-import { React, useState, useRef , useContext} from "react";
+import { React, useState, useRef, useContext } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 import Header from "../../components/Header";
 import { colors, parameters, title } from "../../global/style";
 import * as Animatable from "react-native-animatable";
 import { Formik } from "formik";
-import { auth } from "../../../config/firebase";
+// import { auth } from "../../../config/firebase";
 import { Alert } from "react-native";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { SignInContext } from "../../context/authContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
+import * as SecureStore from 'expo-secure-store';
 
 export default function SignInScreen({ navigation }) {
-
-  console.log("Hello I am here")
-
-  const {dispatchSignedIn} = useContext(SignInContext)
+  const { dispatchSignedIn } = useContext(SignInContext);
   const [textInput2Focussed, setTextInput2Focussed] = useState(false);
-
+  const auth = getAuth()
   const textInput1 = useRef(1);
   const textInput2 = useRef(2);
 
   async function signIn(data) {
     try {
       const { email, password } = data;
-      const user =await signInWithEmailAndPassword(auth, email, password);
+      const user = await signInWithEmailAndPassword(auth, email, password);
       if (user) {
         console.log("USER SIGNED-IN");
-       dispatchSignedIn({type:"UPDATE_SIGN_IN",payload:{userToken:"signed-in"}})
-        
+        dispatchSignedIn({
+          type: "UPDATE_SIGN_IN",
+          payload: { userToken: "signed-in" },
+        });
 
+        const persistAuth = async () => {
+          console.log("This is the data being saved in storage", data);
+          await AsyncStorage.setItem("auth", JSON.stringify(data));
+        };
+
+        persistAuth();
       }
     } catch (error) {
       Alert.alert(error.name, error.message);
     }
   }
+  // useEffect(() => {
+  //   getPersistedAuth();
+  // }, []);
+
+  // const getPersistedAuth = async () => {
+  //   const jsonValue = await AsyncStorage.getItem("userToken");
+  //   return jsonValue;
+  // };
 
   return (
     <View style={styles.container}>
@@ -50,8 +66,8 @@ export default function SignInScreen({ navigation }) {
       <Formik
         initialValues={{ email: "", password: "" }}
         onSubmit={(values) => {
-          console.log("values",values);
-          signIn(values)
+          console.log("values", values);
+          signIn(values);
         }}
       >
         {(props) => (
@@ -160,7 +176,9 @@ export default function SignInScreen({ navigation }) {
           title={"Create an account"}
           buttonStyle={styles.createButton}
           titleStyle={styles.createButtonTitle}
-          onPress={() => {navigation.navigate("SignUpScreen")}}
+          onPress={() => {
+            navigation.navigate("SignUpScreen");
+          }}
         />
       </View>
     </View>

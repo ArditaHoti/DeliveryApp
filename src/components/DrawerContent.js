@@ -14,18 +14,21 @@ import { colors } from "../global/style";
 import { SignInContext } from "../context/authContext";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { auth } from "../../config/firebase";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from 'expo-secure-store';
 export default function DrawerContent(props) {
   const { dispatchSignedIn } = useContext(SignInContext);
 
   async function signOut() {
     try {
-      await signOut(auth).then(() => {
+      await auth.signOut().then(() => {
         console.log("USER SUCCESSFULLY SIGNED OUT");
         dispatchSignedIn({
           type: "UPDATE_SIGN_IN",
           payload: { userToken: null },
         });
+        console.log("userToken in DrawerContent",dispatchSignedIn.userToken);
+        AsyncStorage.removeItem('auth')
       });
     } catch (error) {
       console.log(error);
@@ -63,8 +66,8 @@ export default function DrawerContent(props) {
                 Ardita Hoti
               </Text>
               <Text style={{ color: colors.cardbackground, fontSize: 14 }}>
-                {" "}
-                ardita@fooddelivery.com
+                {}
+                {/* ardita@fooddelivery.com */}
               </Text>
             </View>
           </View>
