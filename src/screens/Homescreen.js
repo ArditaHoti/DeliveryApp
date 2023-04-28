@@ -14,31 +14,44 @@ import {
 import HomeHeader from "./HomeHeader";
 import { colors, parameters } from "../global/style";
 import { Icon } from "@rneui/base";
-import { filterData, restaurantsData } from "../global/data";
 import FoodCard from "../components/foodCard";
 import Countdown from "react-native-countdown-component";
 import { useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from 'expo-secure-store';
+import { filterDataRef, restaurantsDataRef } from "../../config/firebase";
+import { onValue } from "firebase/database";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function HomeScreen({ navigation }) {
   const [delivery, setDelivery] = useState(true);
   const [indexCheck, setIndexCheck] = useState("0");
 
-  // useEffect(() => {
-  //   getPersistedAuth();
-  // }, []);
+  const [filterData, setFilterData] = useState([]);
+  const [restaurantsData, setrestaurantsData] = useState([]);
+  
+  useEffect(() => {
+    onValue(filterDataRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setFilterData(dataArray);
+    });
+  }, []);
 
-  // const getPersistedAuth = async () => {
-  //   const jsonValue = await SecureStore.getItemAsync("userToken");
-
-  //   console.log("The value being returned from async", jsonValue);
-  // };
+  useEffect(() => {
+    onValue(restaurantsDataRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setrestaurantsData(dataArray);
+    });
+  }, []);
 
   return (
     <View style={styles.container}>
       <HomeHeader navigation={navigation} />
+
       <ScrollView stickyHeaderIndices={[0]} showsVerticalScrollIndicator={true}>
         <View
           style={{
@@ -152,11 +165,12 @@ export default function HomeScreen({ navigation }) {
                       : { ...styles.smallCard }
                   }
                 >
-                  <Image
-                    style={{ height: 60, width: 60, borderRadius: 30 }}
-                    source={item.image}
-                  />
-
+                  {item.image.length > 1 && (
+                    <Image
+                      style={{ height: 60, width: 60, borderRadius: 30 }}
+                      source={require("../../assets/fastfood.png")}
+                    />
+                  )}
                   <View>
                     <Text
                       style={
@@ -173,6 +187,7 @@ export default function HomeScreen({ navigation }) {
             )}
           />
         </View>
+
         <View style={styles.headerTextView}>
           <Text style={styles.headerText}>Free Delivery now</Text>
         </View>
@@ -198,7 +213,6 @@ export default function HomeScreen({ navigation }) {
               timeLabels={{ m: "Min", s: "Sec" }}
             /> */}
           </View>
-
           <FlatList
             style={{ marginTop: 10, marginBottom: 10 }}
             horizontal={true}
@@ -230,7 +244,7 @@ export default function HomeScreen({ navigation }) {
             style={{ marginTop: 10, marginBottom: 10 }}
             horizontal={true}
             data={restaurantsData}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()}
             showsHorizontalScrollIndicator={false}
             renderItem={({ item }) => (
               <View style={{ marginRight: 5 }}>

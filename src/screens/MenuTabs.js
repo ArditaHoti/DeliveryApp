@@ -6,11 +6,26 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
-import { menuData, menuDetailedData } from "../global/data";
+//import { menuDetailedData } from "../global/data";
 import MenuCard from "../components/MenuCard";
+import { menuDetailedDataRef } from "../../config/firebase";
+import { useState } from "react";
+import { useEffect } from "react";
+import { onValue } from "firebase/database";
 
 
 export  function Route1({navigation}){
+    const [menuDetailedData, setmenuDetailedData] = useState([]);
+    useEffect(() => {
+      onValue(menuDetailedDataRef, (snapshot) => {
+        const data = snapshot.val();
+        const dataArray = Object.keys(data).map((key) => {
+          return { ...data[key] };
+        });
+        setmenuDetailedData(dataArray);
+      });
+    }, []);
+
     return(
         <View style ={{flex:1}}>
             <View style ={styles.view2}>

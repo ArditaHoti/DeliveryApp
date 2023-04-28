@@ -6,9 +6,7 @@ import { Icon } from "@rneui/base";
 import HomeScreen from "../screens/Homescreen";
 import MyOrdersScreen from "../screens/myOrdersScreen";
 import MyAccountScreen from "../screens/myAccountScreen";
-import SearchScreen from "../screens/searchScreen";
 import { ClientStack } from "./ClientStack";
-import Checkout from "../screens/CheckoutScreen";
 
 const ClientTabs = createBottomTabNavigator();
 
@@ -25,14 +23,13 @@ export default function RootClientTabs() {
           null,
         ],
       }}
-  
-
     >
       <ClientTabs.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          tabBarLabel: "Home",headerShown: false,
+          tabBarLabel: "Home",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Icon name="home" type="material" color={color} size={size} />
           ),
@@ -51,7 +48,6 @@ export default function RootClientTabs() {
         }}
       />
 
-
       <ClientTabs.Screen
         name="MyOrderScreen"
         component={MyOrdersScreen}
@@ -66,16 +62,6 @@ export default function RootClientTabs() {
       <ClientTabs.Screen
         name="MyAccountScreen"
         component={MyAccountScreen}
-        options={{
-          tabBarLabel: "My Account",
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="person" type="material" color={color} size={size} />
-          ),
-        }}
-      />
-      <ClientTabs.Screen
-        name="CheckoutScreen"
-        component={Checkout}
         options={{
           tabBarLabel: "My Account",
           tabBarIcon: ({ color, size }) => (

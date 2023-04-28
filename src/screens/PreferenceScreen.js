@@ -1,4 +1,16 @@
-import React, { Component } from "react";
+//const [quantity, setQuantity] = useState(1);
+// const QuantityCounter = ({ quantity, setQuantity }) => {
+// const decreaseQuantity = () => {
+//     if (quantity > 1) {
+//       setQuantity(quantity - 1);
+//     }
+//   };
+
+//   const increaseQuantity = () => {
+//     setQuantity(quantity + 1);
+//   };
+// };
+import React, { Component, useState } from "react";
 import {
   Text,
   StyleSheet,
@@ -11,28 +23,62 @@ import {
 import { colors } from "../global/style";
 import { Icon, CheckBox } from "@rneui/base";
 
-import { menuDetailedData } from "../global/data";
+// import { menuDetailedData } from "../global/data";
+import { menuDetailedDataRef } from "../../config/firebase";
+import { onValue } from "firebase/database";
 
 export default class PreferenceScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      menuDetailedData: [],
       preference:
-        menuDetailedData[this.props.route.params.index].preferenceData,
-      required: menuDetailedData[this.props.route.params.index].required,
-      minimum_quantity:
-        menuDetailedData[this.props.route.params.index].minimum_quatity,
-      counter: menuDetailedData[this.props.route.params.index].counter,
+       [],
+      required: false,
+      minimum_quantity:0,
+      counter: 0,
     };
   }
 
+  componentDidMount() {
+    onValue(menuDetailedDataRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      this.setState((prev) => {
+        return {
+          menuDetailedData: dataArray,
+          preference:
+            dataArray[this.props.route.params.index].preferenceData,
+          required: dataArray[this.props.route.params.index].required,
+          minimum_quantity:
+            dataArray[this.props.route.params.index].minimum_quatity,
+          counter: dataArray[this.props.route.params.index].counter,
+        };
+      });
+    });
+  }
+  // const [menuDetailedData, setmenuDetailedData] = useState([]);
+  // useEffect(() => {
+  //   onValue(menuDetailedDataRef, (snapshot) => {
+  //     const data = snapshot.val();
+  //     const dataArray = Object.keys(data).map((key) => {
+  //       return { ...data[key] };
+  //     });
+  //     setmenuDetailedData(dataArray);
+  //   });
+  // }, []);
+
   render() {
+    const { navigation } = this.props;
     const index = this.props.route.params.index;
-    const { meal, details, price } = menuDetailedData[index];
+    // const { meal, details, price } = this.state.menuDetailedData[index];
 
     return (
       <View style={styles.container}>
+        {this.state.menuDetailedData.length > 0 &&
         <ScrollView>
           <View style={styles.header}>
             <Image
@@ -57,8 +103,8 @@ export default class PreferenceScreen extends Component {
             />
           </View>
           <View style={styles.view1}>
-            <Text style={styles.text1}>{meal}</Text>
-            <Text style={styles.text2}>{details}</Text>
+            <Text style={styles.text1}>{this.state.menuDetailedData[index].meal}</Text>
+            <Text style={styles.text2}>{this.state.menuDetailedData[index].details}</Text>
           </View>
           <View style={styles.view2}>
             <Text style={styles.text3}>Choose a meal type</Text>
@@ -78,7 +124,7 @@ export default class PreferenceScreen extends Component {
                 />
                 <Text style={styles.text5}>- - - - -</Text>
               </View>
-              <Text style={styles.text6}>R{price.toFixed(2)}</Text>
+              <Text style={styles.text6}>R{this.state.menuDetailedData[index].price.toFixed(2)}</Text>
             </View>
           </View>
           <View>
@@ -87,7 +133,7 @@ export default class PreferenceScreen extends Component {
                 <View style={styles.view7}>
                   <Text style={styles.text8}>
                     {
-                      menuDetailedData[index].preferenceTitle[
+                      this.state.menuDetailedData[index].preferenceTitle[
                         this.state.preference.indexOf(item)
                       ]
                     }
@@ -126,13 +172,11 @@ export default class PreferenceScreen extends Component {
                               }
                             }
                           });
+                          let counterTemp = this.state.counter;
+                          counterTemp[id] = counterTemp[id] + 1;
                           this.setState({
                             preference: [...this.state.preference],
-                            counter: [
-                              ...this.state.counter.slice(0, id),
-                              this.state.counter[id] + 1,
-                              ...this.state.counter.slice(id + 1),
-                            ],
+                            counter: counterTemp,
                           });
                         } else {
                           const preference = this.state.preference.slice();
@@ -174,7 +218,7 @@ export default class PreferenceScreen extends Component {
               </View>
             ))}
           </View>
-        </ScrollView>
+        </ScrollView>}
         <View style={styles.view13}>
           <Text style={styles.text11}>Quantity</Text>
         </View>
@@ -185,9 +229,10 @@ export default class PreferenceScreen extends Component {
               type="material"
               color={colors.black}
               size={25}
-              onPress={() => {}}
+              // onPress={decreaseQuantity}
             />
           </View>
+          {/* <Text style={styles.text9}>{quantity}</Text> */}
           <Text style={styles.text9}>1</Text>
           <View style={styles.view16}>
             <Icon
@@ -195,13 +240,17 @@ export default class PreferenceScreen extends Component {
               type="material"
               color={colors.black}
               size={25}
-              onPress={() => {}}
+              // onPress={increaseQuantity}
             />
           </View>
         </View>
         <View style={styles.view17}>
           <View style={styles.view18}>
-            <Text style={styles.text10}>Add 1 to Cart R78.21</Text>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("CheckoutScreen")}
+            >
+              <Text style={styles.text10}>Add 1 to Cart </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

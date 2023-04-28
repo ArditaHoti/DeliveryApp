@@ -1,11 +1,22 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Dimensions, FlatList } from "react-native";
 import { colors } from "../global/style";
 import SearchResultCard from "../components/SearchResultCard";
-import { restaurantsData } from "../global/data";
+import { restaurantsDataRef } from "../../config/firebase";
+import { onValue } from "firebase/database";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const SearchResultScreen = ({ navigation, route }) => {
+  const [restaurantsData, setrestaurantsData] = useState([]);
+  useEffect(() => {
+    onValue(restaurantsDataRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setrestaurantsData(dataArray);
+    });
+  }, []);
   return (
     <View style={styles.container}>
       <View>
@@ -23,7 +34,12 @@ const SearchResultScreen = ({ navigation, route }) => {
               farAway={item.farAway}
               businessAddress={item.businessAddress}
               productData={item.productData}
-              OnPressRestaurantCard ={()=>{navigation.navigate("RestaurantHomeScreen",{id:index,restaurant:item.restaurantName})}}
+              OnPressRestaurantCard={() => {
+                navigation.navigate("RestaurantHomeScreen", {
+                  id: index,
+                  restaurant: item.restaurantName,
+                });
+              }}
             />
           )}
           ListHeaderComponent={
@@ -44,7 +60,7 @@ export default SearchResultScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
 
   listHeader: {

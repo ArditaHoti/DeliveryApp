@@ -5,21 +5,43 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import { colors, fonts } from "../global/style";
 import RestaurantHeader from "../components/RestaurantHeader";
 import { TabBar, TabView } from "react-native-tab-view";
 import { Icon } from "@rneui/base";
-import { restaurantsData } from "../global/data";
 import { ScrollView } from "react-native-gesture-handler";
 import MenuScreen from "./RestaurantTabs/MenuScreen";
 import { Modal } from "react-native";
-import { menu } from "../global/data";
+import { menuRef, restaurantsDataRef } from "../../config/firebase";
+import { onValue } from "firebase/database";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const initialLayout = SCREEN_WIDTH;
 
 const RestaurantHomeScreen = ({ navigation, route }) => {
+  const [restaurantsData, setrestaurantsData] = useState([]);
+  useEffect(() => {
+    onValue(restaurantsDataRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setrestaurantsData(dataArray);
+    });
+  }, []);
+
+  const [menu, setmenu] = useState([]);
+  useEffect(() => {
+    onValue(menuRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setmenu(dataArray);
+    });
+  }, []);
+
   const { id, restaurant } = route.params;
   const [routes] = useState([
     { key: "first", title: "MENU" },
@@ -71,7 +93,7 @@ const RestaurantHomeScreen = ({ navigation, route }) => {
         <View>
           <RestaurantHeader id={id} navigation={navigation} />
           {/* Showing the restaurant who offers discount */}
-          {restaurantsData[id].discount && (
+          {restaurantsData[id] && restaurantsData[id].discount && (
             <View style={styles.view1}>
               <Text style={styles.text1}>
                 GET {restaurantsData[id].discount}% OFF ON FOOD TOTAL
@@ -80,50 +102,64 @@ const RestaurantHomeScreen = ({ navigation, route }) => {
           )}
           <View style={styles.view2}>
             <View style={styles.view3}>
-              <Text style={styles.text2}>
-                {restaurantsData[id].restaurantName}
-              </Text>
-              <Text style={styles.text3}>{restaurantsData[id].foodType}</Text>
-              <View style={styles.view4}>
-                <Icon
-                  name="star"
-                  type="material-community"
-                  color={colors.grey3}
-                  size={15}
-                />
-                <Text style={styles.text4}>
-                  {restaurantsData[id].averageReview}
-                </Text>
-                <Text style={styles.text5}>
-                  {restaurantsData[id].numberOfReview}
-                </Text>
-                <Icon
-                  name="map-marker"
-                  type="material-community"
-                  color={colors.grey3}
-                  size={15}
-                />
-                <Text style={styles.text6}>
-                  {restaurantsData[id].farAway} mi away
-                </Text>
-              </View>
+              {restaurantsData[id] && (
+                <>
+                  <Text style={styles.text2}>
+                    {restaurantsData[id].restaurantName}
+                  </Text>
+                  <Text style={styles.text3}>
+                    {restaurantsData[id].foodType}
+                  </Text>
+                  <View style={styles.view4}>
+                    <Icon
+                      name="star"
+                      type="material-community"
+                      color={colors.grey3}
+                      size={15}
+                    />
+                    <Text style={styles.text4}>
+                      {restaurantsData[id].averageReview}
+                    </Text>
+                    <Text style={styles.text5}>
+                      {restaurantsData[id].numberOfReview}
+                    </Text>
+                    <Icon
+                      name="map-marker"
+                      type="material-community"
+                      color={colors.grey3}
+                      size={15}
+                    />
+                    <Text style={styles.text6}>
+                      {restaurantsData[id].farAway} mi away
+                    </Text>
+                  </View>
+                </>
+              )}
             </View>
             <View style={styles.view5}>
               <Text style={styles.text6}>Collect</Text>
               <View style={styles.view7}>
-                <Text style={styles.text7}>
-                  {restaurantsData[id].collectTime}
-                </Text>
-                <Text style={styles.text8}>min</Text>
+                {restaurantsData[id] && (
+                  <>
+                    <Text style={styles.text7}>
+                      {restaurantsData[id].collectTime}
+                    </Text>
+                    <Text style={styles.text8}>min</Text>
+                  </>
+                )}
               </View>
             </View>
             <View style={styles.view8}>
               <Text style={styles.text6}>Delivery</Text>
               <View style={styles.view9}>
-                <Text style={styles.text9}>
-                  {restaurantsData[id].deliveryTime}
-                </Text>
-                <Text style={styles.text11}>min</Text>
+                {restaurantsData[id] && (
+                  <>
+                    <Text style={styles.text9}>
+                      {restaurantsData[id].deliveryTime}
+                    </Text>
+                    <Text style={styles.text11}>min</Text>
+                  </>
+                )}
               </View>
             </View>
           </View>

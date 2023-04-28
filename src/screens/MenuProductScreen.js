@@ -10,11 +10,13 @@ import {
   Route7,
   Route8,
 } from "./MenuTabs";
-import { restaurantsData, menu } from "../global/data";
+import {  menu } from "../global/data";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 import { TabView, TabBar } from "react-native-tab-view";
 import { colors } from "../global/style";
 import { Icon } from "@rneui/base";
+import { menuRef } from "../../config/firebase";
+
 
 const MenuProductScreen = ({ navigation, route }) => {
   const [routes] = useState(menu);

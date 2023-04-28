@@ -15,10 +15,16 @@ import { SignInContext } from "../context/authContext";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { auth } from "../../config/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
+import { useState } from "react";
 export default function DrawerContent(props) {
-  const { dispatchSignedIn } = useContext(SignInContext);
+  const [isDarkMode, setIsDarkMode] = useState(false); // state variable to hold the value of the switch
 
+  function handleDarkModeSwitch() {
+    setIsDarkMode((prevMode) => !prevMode); // update the value of the switch
+  }
+
+  const { dispatchSignedIn } = useContext(SignInContext);
   async function signOut() {
     try {
       await auth.signOut().then(() => {
@@ -27,8 +33,7 @@ export default function DrawerContent(props) {
           type: "UPDATE_SIGN_IN",
           payload: { userToken: null },
         });
-        console.log("userToken in DrawerContent",dispatchSignedIn.userToken);
-        AsyncStorage.removeItem('auth')
+        AsyncStorage.removeItem("auth");
       });
     } catch (error) {
       console.log(error);
@@ -183,10 +188,12 @@ export default function DrawerContent(props) {
           <View style={styles.switchText}>
             <Text style={styles.darkthemeText}>Dark Theme</Text>
             <View style={{ paddingRight: 10 }}>
-              <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor="#f4f3f4"
-              />
+            <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor="#f4f3f4"
+              value={isDarkMode} // set the value of the switch to the state variable
+              onValueChange={handleDarkModeSwitch} // set the function to handle the switch value change
+            />
             </View>
           </View>
         </View>
@@ -197,20 +204,17 @@ export default function DrawerContent(props) {
           signOut();
         }}
       >
-      <DrawerItem
-        label="Sign Out"
-        icon={({ color, size }) => (
-          <Icon
-            type="material-community"
-            name="logout-variant"
-            color={color}
-            size={size}
-            // onPress={() => {
-            //   signOut();
-            // }}
-          />
-        )}
-      />
+        <DrawerItem
+          label="Sign Out"
+          icon={({ color, size }) => (
+            <Icon
+              type="material-community"
+              name="logout-variant"
+              color={color}
+              size={size}
+            />
+          )}
+        />
       </TouchableOpacity>
     </View>
   );

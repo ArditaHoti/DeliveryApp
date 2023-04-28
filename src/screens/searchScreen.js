@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,24 @@ import {
   ImageBackgroundComponent,
 } from "react-native";
 import SearchComponent from "../components/SearchComponent";
-import { filterData2 } from "../global/data";
+import { onValue } from "firebase/database";
 import { colors } from "../global/style";
+import { filterData2Ref } from "../../config/firebase";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function SearchScreen({ navigation }) {
+  const [filterData2, setFilterData2] = useState([]);
+  useEffect(() => {
+    onValue(filterData2Ref, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setFilterData2(dataArray);
+    });
+  }, []);
+
   return (
     <View style={{ flex: 1, marginBottom: 10, paddingTop: 20 }}>
       <SearchComponent />
@@ -59,6 +71,16 @@ export default function SearchScreen({ navigation }) {
 }
 
 const Footer = () => {
+  const [filterData2, setFilterData2] = useState([]);
+  useEffect(() => {
+    onValue(filterData2Ref, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setFilterData2(dataArray);
+    });
+  }, []);
   return (
     <View style={{ marginTop: 20, marginBottom: 30 }}>
       <View style={{}}>

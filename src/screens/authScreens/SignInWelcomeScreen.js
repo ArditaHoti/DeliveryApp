@@ -4,40 +4,16 @@ import { View, StyleSheet, Image } from "react-native";
 import { colors, parameters, title } from "../../global/style";
 import Swiper from "react-native-swiper";
 import { SignInContext } from "../../context/authContext";
-import { auth } from "../../../config/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import AuthStack from "../../navigation/authNavigators";
-import { AppStack } from "../../navigation/appStack";
-import { NavigationContainer } from "@react-navigation/native";
+import { auth, filterDataRef } from "../../../config/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import { getAuth } from "firebase/auth";
 
 export default function SignInWelcomeScreen({ navigation }) {
-  const { dispatchSignedIn } = useContext(SignInContext);
 
+  const { dispatchSignedIn } = useContext(SignInContext);
   const auth = getAuth();
   const user = auth.currentUser;
-  console.log("userTokenin sigeinWElcomeScreen", auth);
-
-  // useEffect(() => {
-  //   onAuthStateChanged(auth,(user) => {
-  //     console.log("onIdTokenChanged",user);
-
-  //     if (user) {
-  // dispatchSignedIn({
-  //   type: "UPDATE_SIGN_IN",
-  //   payload: { userToken: "signed-in" },
-  // });
-
-  //     } else {
-  //       dispatchSignedIn({
-  //         type: "UPDATE_SIGN_IN",
-  //         payload: { userToken: null },
-  //       });
-  //     }
-  //   });
-  // }, []);
+  console.log("filterDataRef:", filterDataRef);
   const getPersistedAuth = async () => {
     const jsonValue = await AsyncStorage.getItem("auth");
 
@@ -118,7 +94,6 @@ export default function SignInWelcomeScreen({ navigation }) {
             title="SIGN IN"
             buttonStyle={parameters.styledButton}
             titleStyle={parameters.buttonTitle}
-            //onPress={() => navigation.navigate("SignInScreen")}
             onPress={() => {
               getPersistedAuth();
             }}

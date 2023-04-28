@@ -15,19 +15,4 @@ export default function RootNavigator() {
         {(signedIn.userToken == null ) ? <AuthStack /> : <AppStack />}
       </NavigationContainer>
     );
-  // const { user } = useAuth();
-  // if (user) {
-  //   return (
-  //     <NavigationContainer>
-  //       <AppStack />
-  //     </NavigationContainer>
-  //   );
-  // } else {
-  //   return (
-  //     <NavigationContainer>
-  //       <AuthStack />
-  //     </NavigationContainer>
-  //   );
-  // }
-
 }

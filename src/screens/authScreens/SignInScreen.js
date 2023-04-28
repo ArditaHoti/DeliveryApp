@@ -5,18 +5,19 @@ import Header from "../../components/Header";
 import { colors, parameters, title } from "../../global/style";
 import * as Animatable from "react-native-animatable";
 import { Formik } from "formik";
-// import { auth } from "../../../config/firebase";
 import { Alert } from "react-native";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 import { SignInContext } from "../../context/authContext";
+import { auth, provider } from "../../../config/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect } from "react";
-import * as SecureStore from 'expo-secure-store';
 
 export default function SignInScreen({ navigation }) {
   const { dispatchSignedIn } = useContext(SignInContext);
   const [textInput2Focussed, setTextInput2Focussed] = useState(false);
-  const auth = getAuth()
   const textInput1 = useRef(1);
   const textInput2 = useRef(2);
 
@@ -42,14 +43,26 @@ export default function SignInScreen({ navigation }) {
       Alert.alert(error.name, error.message);
     }
   }
-  // useEffect(() => {
-  //   getPersistedAuth();
-  // }, []);
 
-  // const getPersistedAuth = async () => {
-  //   const jsonValue = await AsyncStorage.getItem("userToken");
-  //   return jsonValue;
-  // };
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      console.log("USER SIGNED-IN WITH GMAIL");
+      dispatchSignedIn({
+        type: "UPDATE_SIGN_IN",
+        payload: { userToken: "signed-in" },
+      });
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.email;
+      const credential = GoogleAuthProvider.credentialFromError(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -95,7 +108,7 @@ export default function SignInScreen({ navigation }) {
                   />
                 </Animatable.View>
                 <TextInput
-                  style={{ width: "60%" }}
+                  style={{ width: "80%" }}
                   placeholder="Password"
                   ref={textInput2}
                   secureTextEntry
@@ -163,7 +176,7 @@ export default function SignInScreen({ navigation }) {
           button
           type="google"
           style={styles.SocialIcon}
-          onPress={() => {}}
+          onPress={handleGoogleSignIn}
         />
       </View>
 
@@ -209,10 +222,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 12,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignContent: "center",
     alignItems: "center",
-    paddingLeft: 15,
+    paddingLeft: 10,
     height: 50,
   },
 
