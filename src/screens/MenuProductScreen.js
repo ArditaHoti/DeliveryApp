@@ -1,5 +1,11 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  ActivityIndicator,
+} from "react-native";
 import {
   Route1,
   Route2,
@@ -10,18 +16,50 @@ import {
   Route7,
   Route8,
 } from "./MenuTabs";
-import {  menu } from "../global/data";
-const SCREEN_WIDTH = Dimensions.get("window").width;
 import { TabView, TabBar } from "react-native-tab-view";
 import { colors } from "../global/style";
 import { Icon } from "@rneui/base";
 import { menuRef } from "../../config/firebase";
+import { onValue } from "firebase/database";
 
+// Get the screen width to set the initial layout for the TabView component
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const useMenuData = () => {
+  // State to hold the fetched menu data
+  const [menu, setMenu] = useState([]);
+
+  // Fetch the menu data from Firebase and set it to the state
+  useEffect(() => {
+    onValue(menuRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setMenu(dataArray);
+    });
+  }, []);
+  return menu;
+};
 
 const MenuProductScreen = ({ navigation, route }) => {
-  const [routes] = useState(menu);
+  const menu = useMenuData();
+  // State to keep track of the active tab index
   const [index, setIndex] = useState(0);
+  // Set the menu data as the initial routes for the TabView component
+  const [routes, setRoutes] = useState([]);
 
+  useEffect(() => {
+    setRoutes(
+      menu.map((item) => {
+        return {
+          key: item.key,
+          title: item.title,
+        };
+      })
+    );
+  }, [menu]);
+
+  // Render the TabBar component with custom styles
   const renderTabBar = (props) => (
     <TabBar
       {...props}
@@ -33,11 +71,11 @@ const MenuProductScreen = ({ navigation, route }) => {
       contentContainerStyle={styles.tabContainer}
     />
   );
-
+  // Render the scene based on the active tab index
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 1:
-        return <Route1 navigation = {navigation} />
+        return <Route1 navigation={navigation} />;
       case 2:
         return <Route2 name={navigation} />;
       case 3:
@@ -57,7 +95,7 @@ const MenuProductScreen = ({ navigation, route }) => {
         return null;
     }
   };
-
+  // Render the component
   return (
     <View style={styles.container}>
       <View style={styles.view1}>
@@ -87,6 +125,7 @@ const MenuProductScreen = ({ navigation, route }) => {
 
 export default MenuProductScreen;
 
+// Styles
 const styles = StyleSheet.create({
   scene: {
     flex: 1,

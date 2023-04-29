@@ -1,10 +1,24 @@
 import { StyleSheet, Text, View, ImageBackground , Animated} from "react-native";
 import {React, useState, useEffect} from "react";
-import { restaurantsData } from "../global/data";
+//import { restaurantsData } from "../global/data";
 import { colors } from "../global/style";
 import { Icon } from "@rneui/base";
+import { restaurantsDataRef } from "../../config/firebase";
+import { onValue } from "firebase/database";
 
 export default function RestaurantHeader({ navigation, id }) {
+
+  const [restaurantsData, setrestaurantsData] = useState([]);
+  useEffect(() => {
+    onValue(restaurantsDataRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setrestaurantsData(dataArray);
+    });
+  }, []);
+
     const index2 = 10
     const currentValue = new Animated.Value(1)
     const [liked,setLiked] = useState(false)
@@ -36,6 +50,10 @@ export default function RestaurantHeader({ navigation, id }) {
             })
         }
     },[liked])
+      // Check if restaurantsData has an object at index 'id'
+  if (!restaurantsData[id]) {
+    return null; // Return null or any other component to indicate loading/error state
+  }
 
   return (
     <View style={styles.container}>

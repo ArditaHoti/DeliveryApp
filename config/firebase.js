@@ -19,6 +19,8 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const provider = new GoogleAuthProvider(app);
 export const auth = getAuth(app);
+
+
 // Initialize Realtime Database and get a reference to the service
 export const database = getDatabase(app);
 export const filterDataRef = ref(database, "filterData");

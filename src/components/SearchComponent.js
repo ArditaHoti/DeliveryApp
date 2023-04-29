@@ -14,17 +14,31 @@ import * as Animatable from "react-native-animatable";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 import { colors } from "../global/style";
-import { filterData } from "../global/data";
+//import { filterData } from "../global/data";
 import { filter } from "lodash";
 import SearchResultScreen from "../screens/searchResultScreen";
+import { filterDataRef } from "../../config/firebase";
+import { useEffect } from "react";
+import { onValue } from "firebase/database";
 
 export default function SearchComponent() {
   const navigation = useNavigation();
-
+  const [filterData, setfilterData] = useState([]);
+  useEffect(() => {
+    onValue(filterDataRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setfilterData(dataArray);
+    });
+  }, []);
   const [data, setData] = useState([...filterData]);
   const [modalVisible, setModalVisible] = useState(false);
   const [textInputFossued, setTextInputFossued] = useState(true);
   const textInput = useRef(0);
+
+
 
   const contains = ({ name }, query) => {
     if (name.includes(query)) {

@@ -1,11 +1,36 @@
 import { StyleSheet, Text, View , TouchableOpacity} from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@rneui/base";
-import { specialData, menuData} from "../../global/data";
+//import { specialData, menuData} from "../../global/data";
 import { colors } from "../../global/style";
+import { menuDataRef, specialDataRef } from "../../../config/firebase";
+import { onValue } from "firebase/database";
 
 const MenuScreen = ({navigation,restaurant,onPress}) => {
 
+
+
+  const [specialData, setspecialData] = useState([]);
+  useEffect(() => {
+    onValue(specialDataRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setspecialData(dataArray);
+    });
+  }, []);
+
+  const [menuData, setmenuData] = useState([]);
+  useEffect(() => {
+    onValue(menuDataRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataArray = Object.keys(data).map((key) => {
+        return { ...data[key] };
+      });
+      setmenuData(dataArray);
+    });
+  }, []);
   const handlePress = () => {
     // navigation.navigate("PrductSec")
   }

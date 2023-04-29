@@ -44,26 +44,47 @@ export default function SignInScreen({ navigation }) {
     }
   }
 
-  const handleGoogleSignIn = async () => {
+  // const handleGoogleSignIn = async () => {
+  //   try {
+  //     const result = await signInWithPopup(auth, provider);
+  //     const credential = GoogleAuthProvider.credentialFromResult(result);
+  //     const token = credential.accessToken;
+  //     console.log("USER SIGNED-IN WITH GMAIL");
+  //     dispatchSignedIn({
+  //       type: "UPDATE_SIGN_IN",
+  //       payload: { userToken: "signed-in" },
+  //     });
+  //   } catch (error) {
+  //     console.error("Error signing in with Google:", error);
+  //     // Handle Errors here.
+  //     const errorCode = error.code;
+  //     const errorMessage = error.message;
+  //     const email = error.email;
+  //     const credential = GoogleAuthProvider.credentialFromError(error);
+  //   }
+  // };
+  async function signInGoogle() {
     try {
       const result = await signInWithPopup(auth, provider);
+      // This gives you a Google Access Token. You can use it to access the Google API.
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential.accessToken;
-      console.log("USER SIGNED-IN WITH GMAIL");
-      dispatchSignedIn({
-        type: "UPDATE_SIGN_IN",
-        payload: { userToken: "signed-in" },
-      });
+      // The signed-in user info.
+      const user = result.user;
+      // IdP data available using getAdditionalUserInfo(result)
+      // ...
     } catch (error) {
-      console.error("Error signing in with Google:", error);
       // Handle Errors here.
       const errorCode = error.code;
       const errorMessage = error.message;
-      const email = error.email;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
       const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
     }
-  };
-
+  }
+  
   return (
     <View style={styles.container}>
       <Header title="MY ACOONUT" type="arrow-left" navigation={navigation} />
@@ -176,7 +197,7 @@ export default function SignInScreen({ navigation }) {
           button
           type="google"
           style={styles.SocialIcon}
-          onPress={handleGoogleSignIn}
+          onPress={signInGoogle}
         />
       </View>
 
