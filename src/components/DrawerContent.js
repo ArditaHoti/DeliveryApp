@@ -15,16 +15,38 @@ import { SignInContext } from "../context/authContext";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { auth } from "../../config/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
-export default function DrawerContent(props) {
-  const [isDarkMode, setIsDarkMode] = useState(false); // state variable to hold the value of the switch
+import { useEffect } from "react";
 
+// Define a default export function called DrawerContent that takes props as an argument
+export default function DrawerContent(props) {
+  // Create a state variable called isDarkMode with a default value of false, and a function called setIsDarkMode to update it
+  const [isDarkMode, setIsDarkMode] = useState(false); // state variable to hold the value of the switch
+  const [user, setUser] = useState({});
+  useEffect(() => {
+   getPersistedAuth();
+  }, []);
+
+  const getPersistedAuth = async () => {
+    const jsonValue = await AsyncStorage.getItem("auth");
+
+    console.log("The value being returned from", jsonValue);
+
+    if (jsonValue != null) {
+      setUser(user);
+      console.log("the user:",user);
+    } else {
+      setUser({});
+    }
+  };
+
+  // Define a function called handleDarkModeSwitch that toggles the value of isDarkMode when called
   function handleDarkModeSwitch() {
     setIsDarkMode((prevMode) => !prevMode); // update the value of the switch
   }
-
+  // Get the dispatchSignedIn function from the SignInContext object using the useContext hook
   const { dispatchSignedIn } = useContext(SignInContext);
+  // Define an asynchronous function called signOut that logs the user out and removes their authentication token from AsyncStorage
   async function signOut() {
     try {
       await auth.signOut().then(() => {
@@ -39,6 +61,7 @@ export default function DrawerContent(props) {
       console.log(error);
     }
   }
+  // Render the DrawerContent component with the following JSX
   return (
     <View style={styles.container}>
       <DrawerContentScrollView {...props}>
@@ -68,11 +91,11 @@ export default function DrawerContent(props) {
                   fontSize: 18,
                 }}
               >
-                Ardita Hoti
+                {user.name + " " + user.family_name}
               </Text>
               <Text style={{ color: colors.cardbackground, fontSize: 14 }}>
-                {}
-                {/* ardita@fooddelivery.com */}
+                {/* Display user's email address here */}
+                {user.email}
               </Text>
             </View>
           </View>
@@ -132,6 +155,8 @@ export default function DrawerContent(props) {
           </View>
         </View>
 
+        {/* Render the default DrawerItemList component*/}
+
         <DrawerItemList {...props} />
 
         <DrawerItem
@@ -188,12 +213,12 @@ export default function DrawerContent(props) {
           <View style={styles.switchText}>
             <Text style={styles.darkthemeText}>Dark Theme</Text>
             <View style={{ paddingRight: 10 }}>
-            <Switch
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor="#f4f3f4"
-              value={isDarkMode} // set the value of the switch to the state variable
-              onValueChange={handleDarkModeSwitch} // set the function to handle the switch value change
-            />
+              <Switch
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor="#f4f3f4"
+                value={isDarkMode} // set the value of the switch to the state variable
+                onValueChange={handleDarkModeSwitch} // set the function to handle the switch value change
+              />
             </View>
           </View>
         </View>

@@ -10,6 +10,8 @@
 //     setQuantity(quantity + 1);
 //   };
 // };
+
+//Importing required modules
 import React, { Component, useState } from "react";
 import {
   Text,
@@ -22,25 +24,24 @@ import {
 } from "react-native";
 import { colors } from "../global/style";
 import { Icon, CheckBox } from "@rneui/base";
-
-// import { menuDetailedData } from "../global/data";
 import { menuDetailedDataRef } from "../../config/firebase";
 import { onValue } from "firebase/database";
 
+// Creating the PreferenceScreen component
 export default class PreferenceScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       menuDetailedData: [],
-      preference:
-       [],
+      preference: [],
       required: false,
-      minimum_quantity:0,
+      minimum_quantity: 0,
       counter: 0,
     };
   }
-
+  // Defining a callback function to fetch the menu data
+  // from Firebase when the component mounts
   componentDidMount() {
     onValue(menuDetailedDataRef, (snapshot) => {
       const data = snapshot.val();
@@ -50,8 +51,7 @@ export default class PreferenceScreen extends Component {
       this.setState((prev) => {
         return {
           menuDetailedData: dataArray,
-          preference:
-            dataArray[this.props.route.params.index].preferenceData,
+          preference: dataArray[this.props.route.params.index].preferenceData,
           required: dataArray[this.props.route.params.index].required,
           minimum_quantity:
             dataArray[this.props.route.params.index].minimum_quatity,
@@ -60,165 +60,175 @@ export default class PreferenceScreen extends Component {
       });
     });
   }
-  // const [menuDetailedData, setmenuDetailedData] = useState([]);
-  // useEffect(() => {
-  //   onValue(menuDetailedDataRef, (snapshot) => {
-  //     const data = snapshot.val();
-  //     const dataArray = Object.keys(data).map((key) => {
-  //       return { ...data[key] };
-  //     });
-  //     setmenuDetailedData(dataArray);
-  //   });
-  // }, []);
-
+  // Defining the render method
   render() {
     const { navigation } = this.props;
     const index = this.props.route.params.index;
-    // const { meal, details, price } = this.state.menuDetailedData[index];
-
+    // Returning the JSX to be rendered
     return (
       <View style={styles.container}>
-        {this.state.menuDetailedData.length > 0 &&
-        <ScrollView>
-          <View style={styles.header}>
-            <Image
-              style={styles.backgroundImage}
-              source={{
-                uri: "https://i.pinimg.com/236x/a8/db/2e/a8db2ebc6fdb100e96743a2269cfde4d.jpg",
-              }}
-            />
-          </View>
-          <View style={styles.bar}>
-            <Text style={styles.title}>Choose a preference</Text>
-          </View>
-          <View style={styles.view12}>
-            <Icon
-              name="arrow-left"
-              type="material-community"
-              color={colors.cardbackground}
-              size={25}
-              onPress={() => {
-                this.props.navigation.goBack();
-              }}
-            />
-          </View>
-          <View style={styles.view1}>
-            <Text style={styles.text1}>{this.state.menuDetailedData[index].meal}</Text>
-            <Text style={styles.text2}>{this.state.menuDetailedData[index].details}</Text>
-          </View>
-          <View style={styles.view2}>
-            <Text style={styles.text3}>Choose a meal type</Text>
-            <View style={styles.view3}>
-              <Text style={styles.text4}>REQUIRED</Text>
+        {this.state.menuDetailedData.length > 0 && (
+          <ScrollView>
+            <View style={styles.header}>
+              <Image
+                style={styles.backgroundImage}
+                source={{
+                  uri: "https://i.pinimg.com/236x/a8/db/2e/a8db2ebc6fdb100e96743a2269cfde4d.jpg",
+                }}
+              />
             </View>
-          </View>
-          <View style={styles.view4}>
-            <View style={styles.view5}>
-              <View style={styles.view6}>
-                <CheckBox
-                  center
-                  checkedIcon="dot-circle-o"
-                  uncheckedIcon="circle-o"
-                  checked={true}
-                  checkedColor={colors.buttons}
-                />
-                <Text style={styles.text5}>- - - - -</Text>
+            <View style={styles.bar}>
+              <Text style={styles.title}>Choose a preference</Text>
+            </View>
+            <View style={styles.view12}>
+              <Icon
+                name="arrow-left"
+                type="material-community"
+                color={colors.cardbackground}
+                size={25}
+                onPress={() => {
+                  this.props.navigation.goBack();
+                }}
+              />
+            </View>
+            <View style={styles.view1}>
+              <Text style={styles.text1}>
+                {this.state.menuDetailedData[index].meal}
+              </Text>
+              <Text style={styles.text2}>
+                {this.state.menuDetailedData[index].details}
+              </Text>
+            </View>
+            <View style={styles.view2}>
+              <Text style={styles.text3}>Choose a meal type</Text>
+              <View style={styles.view3}>
+                <Text style={styles.text4}>REQUIRED</Text>
               </View>
-              <Text style={styles.text6}>R{this.state.menuDetailedData[index].price.toFixed(2)}</Text>
             </View>
-          </View>
-          <View>
-            {this.state.preference.map((item) => (
-              <View key={item.id}>
-                <View style={styles.view7}>
-                  <Text style={styles.text8}>
-                    {
-                      this.state.menuDetailedData[index].preferenceTitle[
-                        this.state.preference.indexOf(item)
-                      ]
-                    }
-                  </Text>
-                  {this.state.required[this.state.preference.indexOf(item)] && (
-                    <View style={styles.view9}>
-                      <Text style={styles.text7}>
-                        {
-                          this.state.minimum_quantity[
-                            this.state.preference.indexOf(item)
-                          ]
-                        }{" "}
-                        REQUIRED
-                      </Text>
-                    </View>
-                  )}
+            <View style={styles.view4}>
+              <View style={styles.view5}>
+                <View style={styles.view6}>
+                  <CheckBox
+                    center
+                    checkedIcon="dot-circle-o"
+                    uncheckedIcon="circle-o"
+                    checked={true}
+                    checkedColor={colors.buttons}
+                  />
+                  <Text style={styles.text5}>- - - - -</Text>
                 </View>
-                <View style={styles.view10}>
-                  {item.map((items) => (
-                    <TouchableOpacity
-                      key={items.id}
-                      onPress={() => {
-                        const id = this.state.preference.findIndex(
-                          (preference) => preference.id === item.id
-                        );
-                        if (this.state.minimum_quantity[id] !== null) {
-                          const check = this.state.preference[id].filter(
-                            (i) => i.checked
-                          ).length;
-                          this.state.preference[id].forEach((i) => {
-                            if (i.id === items.id) {
-                              if (check < this.state.minimum_quantity[id]) {
-                                i.checked = !i.checked;
-                              } else {
-                                i.checked = false;
+                <Text style={styles.text6}>
+                  £{this.state.menuDetailedData[index].price.toFixed(2)}
+                </Text>
+              </View>
+            </View>
+            <View>
+              {this.state.preference.map((item, mainIndex) => (
+                <View key={item.id}>
+                  <View style={styles.view7}>
+                    <Text style={styles.text8}>
+                      {
+                        this.state.menuDetailedData[index].preferenceTitle[
+                          this.state.preference.indexOf(item)
+                        ]
+                      }
+                    </Text>
+                    {this.state.required[
+                      this.state.preference.indexOf(item)
+                    ] && (
+                      <View style={styles.view9}>
+                        <Text style={styles.text7}>
+                          {
+                            this.state.minimum_quantity[
+                              this.state.preference.indexOf(item)
+                            ]
+                          }{" "}
+                          REQUIRED
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <View style={styles.view10}>
+                    {item.map((items, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          if (this.state.minimum_quantity[mainIndex] !== null) {
+                            let counterTemp = this.state.counter;
+                            let tempState = this.state.preference;
+                            tempState[mainIndex].forEach((i) => {
+                              if (i.id === items.id) {
+                                if (
+                                  this.state.counter[mainIndex] <
+                                    this.state.minimum_quantity[mainIndex] ||
+                                  this.state.minimum_quantity[mainIndex] ===
+                                    undefined
+                                ) {
+                                  if (i.checked) {
+                                    i.checked = false;
+                                    counterTemp[mainIndex] =
+                                      counterTemp[mainIndex] - 1;
+                                    console.log(counterTemp);
+                                  } else {
+                                    i.checked = true;
+                                    counterTemp[mainIndex] =
+                                      counterTemp[mainIndex] + 1;
+                                  }
+                                } else if (i.checked) {
+                                  i.checked = false;
+                                  counterTemp[mainIndex] =
+                                    counterTemp[mainIndex] - 1;
+                                  console.log(counterTemp[mainIndex]);
+                                }
                               }
-                            }
-                          });
-                          let counterTemp = this.state.counter;
-                          counterTemp[id] = counterTemp[id] + 1;
-                          this.setState({
-                            preference: [...this.state.preference],
-                            counter: counterTemp,
-                          });
-                        } else {
-                          const preference = this.state.preference.slice();
-                          preference[id].forEach((i) => {
-                            if (i.id === item.id) {
-                              i.checked = !i.checked;
-                            }
-                          });
-                          this.setState({
-                            preference: preference,
-                          });
-                        }
-                      }}
-                    >
-                      <View style={styles.view4}>
-                        <View style={styles.view19}>
-                          <View style={styles.view6}>
-                            <CheckBox
-                              center
-                              checkedIcon="check-square-o"
-                              uncheckedIcon="square-o"
-                              checked={items.checked}
-                              checkedColor={colors.buttons}
-                            />
-                            <Text
-                              style={{ color: colors.grey2, marginLeft: 10 }}
-                            >
-                              {items.name}
+                            });
+
+                            this.setState({
+                              preference: tempState,
+                              counter: counterTemp,
+                            });
+                          } else {
+                            const preference = this.state.preference.slice();
+                            preference[index].forEach((i) => {
+                              if (i.id === item.id) {
+                                i.checked = !i.checked;
+                              }
+                            });
+                            this.setState({
+                              preference: preference,
+                            });
+                          }
+                        }}
+                      >
+                        <View style={styles.view4}>
+                          <View style={styles.view19}>
+                            <View style={styles.view6}>
+                              <CheckBox
+                                center
+                                checkedIcon="check-square-o"
+                                uncheckedIcon="square-o"
+                                checked={items.checked}
+                                checkedColor={colors.buttons}
+                              />
+                              <Text
+                                style={{ color: colors.grey2, marginLeft: 10 }}
+                              >
+                                {items.name}
+                              </Text>
+                            </View>
+                            <Text style={styles.text6}>
+                              £{items.price.toFixed(2)}
                             </Text>
                           </View>
-                          <Text style={styles.text6}>
-                            R{items.price.toFixed(2)}
-                          </Text>
                         </View>
-                      </View>
-                    </TouchableOpacity>
-                  ))}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
                 </View>
-              </View>
-            ))}
-          </View>
-        </ScrollView>}
+              ))}
+            </View>
+          </ScrollView>
+        )}
         <View style={styles.view13}>
           <Text style={styles.text11}>Quantity</Text>
         </View>
@@ -258,6 +268,7 @@ export default class PreferenceScreen extends Component {
   }
 }
 
+//Style
 const styles = StyleSheet.create({
   container: { flex: 1 },
   fill: {

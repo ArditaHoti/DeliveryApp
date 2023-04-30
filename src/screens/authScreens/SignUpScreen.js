@@ -14,7 +14,11 @@ import { Icon, Button } from "@rneui/base";
 import * as Animatable from "react-native-animatable";
 import { auth } from "../../../config/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { SignInContext } from "../../context/authContext";
+import { useContext } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// Define an object with initial values for form fields
 const initialValues = {
   phone_number: "",
   name: "",
@@ -23,17 +27,31 @@ const initialValues = {
   email: "",
   username: "",
 };
-
+// Define a component called SignUpScreen that takes a navigation prop
 const SignUpScreen = ({ navigation }) => {
+  // Define two state variables for tracking password focus and blur events
   const [passwordFocussed, setPassordFocussed] = useState(false);
   const [passwordBlured, setPasswordBlured] = useState(false);
+  const { dispatchSignedIn } = useContext(SignInContext);
 
+// Define an async function for handling user sign-up
   async function signUp(values) {
     const { email, password } = values;
 
     try {
-      await createUserWithEmailAndPassword( auth,email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
       console.log("USER ACCOUNT CREATED");
+      dispatchSignedIn({
+        type: "UPDATE_SIGN_IN",
+        payload: { userToken: "signed-in" },
+      });
+
+      const persistAuth = async () => {
+        console.log("This is the data being saved in storage", values);
+        await AsyncStorage.setItem("auth", JSON.stringify(values));
+      };
+
+      persistAuth();
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         Alert.alert("That email address is already inuse");
@@ -53,12 +71,14 @@ const SignUpScreen = ({ navigation }) => {
         <View style={styles.view1}>
           <Text style={styles.text1}>Sign-Up</Text>
         </View>
+        {/* Use Formik to handle form state and submission */}
         <Formik
           initialValues={initialValues}
           onSubmit={(values) => {
             signUp(values);
           }}
         >
+            {/* Render the form using a render prop */}
           {(props) => (
             <View style={styles.view2}>
               <View>
@@ -114,6 +134,7 @@ const SignUpScreen = ({ navigation }) => {
               </View>
 
               <View style={styles.view14}>
+                 {/* Animate the lock icon when password input is focused */}
                 <Animatable.View
                   animation={passwordFocussed ? "fadeInRight" : "fadeInLeft"}
                   duration={400}
@@ -195,6 +216,8 @@ const SignUpScreen = ({ navigation }) => {
 
 export default SignUpScreen;
 
+
+//Style
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "white" },
 
