@@ -18,6 +18,16 @@ import { SignInContext } from "../../context/authContext";
 import { useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// The signUp function is defined as an asynchronous function that handles usersign-up. It takes an object 
+// of form values as its argument and extractsthe email, password, name, and family_name properties from it.
+// It then attempts to create a new user account using the createUserWithEmailAndPassword function,
+// which is likely part of a library for handling user authentication. 
+// If the account is created successfully, the function logs a message and dispatches a sign-in action 
+// using the dispatchSignedIn function, which is obtained from a context calledSignInContext. 
+// It also saves the form values to local storage usingthe AsyncStorage library. 
+// If an error occurs, the function displays an alert message with a message based on the error code.
+
+
 // Define an object with initial values for form fields
 const initialValues = {
   phone_number: "",
@@ -29,14 +39,16 @@ const initialValues = {
 };
 // Define a component called SignUpScreen that takes a navigation prop
 const SignUpScreen = ({ navigation }) => {
+
   // Define two state variables for tracking password focus and blur events
   const [passwordFocussed, setPassordFocussed] = useState(false);
   const [passwordBlured, setPasswordBlured] = useState(false);
+
   const { dispatchSignedIn } = useContext(SignInContext);
 
 // Define an async function for handling user sign-up
   async function signUp(values) {
-    const { email, password } = values;
+    const { email, password , name, family_name} = values;
 
     try {
       await createUserWithEmailAndPassword(auth, email, password);

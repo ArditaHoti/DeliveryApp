@@ -14,12 +14,17 @@ import * as Animatable from "react-native-animatable";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 import { colors } from "../global/style";
-//import { filterData } from "../global/data";
 import { filter } from "lodash";
-import SearchResultScreen from "../screens/searchResultScreen";
 import { filterDataRef } from "../../config/firebase";
 import { useEffect } from "react";
 import { onValue } from "firebase/database";
+
+
+
+// This is a functional component that renders a search component with a modal. 
+// The component consists of a touchable area that opens a modal when pressed, which contains
+// a search input and a list of items that match the search query. The user can search for items 
+// by typing in the search input, and the list updates dynamically with each keystroke
 
 export default function SearchComponent() {
   const navigation = useNavigation();

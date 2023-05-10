@@ -4,6 +4,11 @@ import { View, Text, StyleSheet } from "react-native";
 import { Icon, withBadge } from "@rneui/base";
 import { colors, parameters } from "../global/style";
 
+
+//HomeHeader displays a header with a navigation menu icon, the app name, 
+//and a shopping cart icon with a badge. The navigation prop is used to toggle the 
+//drawer menu when the menu icon is pressed. The withBadge function is used to add 
+//a badge with a count of 0 to the shopping cart icon. 
 export default function HomeHeader({ navigation }) {
   const BadgeIcon = withBadge(0)(Icon);
 

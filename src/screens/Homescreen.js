@@ -19,6 +19,14 @@ import Countdown from "react-native-countdown-component";
 import { useEffect } from "react";
 import { filterDataRef, restaurantsDataRef } from "../../config/firebase";
 import { onValue } from "firebase/database";
+
+
+// The screen displays different food categories and nearby restaurants offering free delivery. 
+// Users can filter the restaurants by category and choose between delivery or pick-up.
+// The component uses the useState hook to manage the state of delivery and indexCheck. 
+// It uses the useEffect hook to fetch the filter and restaurant data from Firebase using onValue
+// method from the Firebase Realtime Database library. The fetched data is stored in filterData and restaurantsData arrays respectively.
+
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function HomeScreen({ navigation }) {
@@ -168,7 +176,7 @@ export default function HomeScreen({ navigation }) {
                   {item.image.length > 1 && (
                     <Image
                       style={{ height: 60, width: 60, borderRadius: 30 }}
-                      source={require("../../assets/fastfood.png")}
+                     source={{ uri: item.image }}
                     />
                   )}
                   <View>
@@ -204,14 +212,14 @@ export default function HomeScreen({ navigation }) {
             >
               Options changing in
             </Text>
-            {/* <Countdown
+            <Countdown
               until={3600}
               size={14}
               digitStyle={{ backgroundColor: colors.lightgreen }}
               digitTxtStyle={{ color: colors.cardbackground }}
               timeToShow={["M", "S"]}
               timeLabels={{ m: "Min", s: "Sec" }}
-            /> */}
+            />
           </View>
           <FlatList
             style={{ marginTop: 10, marginBottom: 10 }}

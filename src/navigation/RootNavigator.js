@@ -6,13 +6,15 @@ import { SignInContext } from "../context/authContext";
 import useAuth from "../../hooks/useAuth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// This component renders the appropriate stack navigator depending on whether the user is signed in or not
 export default function RootNavigator() {
-   const {signedIn} = useContext(SignInContext);
-    console.log("userToken in RootNavigator",signedIn.userToken);
+  // Access the sign-in state from the context using the useContext hook
+  const { signedIn } = useContext(SignInContext);
 
-    return (
-      <NavigationContainer>
-        {(signedIn.userToken == null ) ? <AuthStack /> : <AppStack />}
-      </NavigationContainer>
-    );
+  // If user is not signed in, render the authentication stack, otherwise render the application stack
+  return (
+    <NavigationContainer>
+      {signedIn.userToken == null ? <AuthStack /> : <AppStack />}
+    </NavigationContainer>
+  );
 }

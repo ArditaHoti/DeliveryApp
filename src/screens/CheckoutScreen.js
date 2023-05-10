@@ -1,3 +1,4 @@
+import { Button } from "@rneui/base";
 import React, { useState } from "react";
 import {
   View,
@@ -5,10 +6,11 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Alert
+  Alert,
 } from "react-native";
+import { parameters, colors } from "../global/style";
 
-const Checkout = () => {
+const CheckoutScreen = () => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
@@ -18,15 +20,13 @@ const Checkout = () => {
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
 
-
-
   const handlePlaceOrder = async () => {
     try {
       // TODO: Send the order details to the server and wait for the response
-      const response = await fetch('https://example.com/api/place-order', {
-        method: 'POST',
+      const response = await fetch("https://example.com/api/place-order", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name,
@@ -40,21 +40,20 @@ const Checkout = () => {
           // TODO: Include the order details in the request body
         }),
       });
-  
+
       if (response.ok) {
-        // TODO: Handle the successful order placement
-        Alert.alert('Order placed successfully!');
+        //Handle the successful order placement
+        Alert.alert("Order placed successfully!");
       } else {
-        // TODO: Handle the failed order placement
-        Alert.alert('Failed to place order');
+        //Handle the failed order placement
+        Alert.alert("Failed to place order");
       }
     } catch (error) {
-      // TODO: Handle the error
+      // Handle the error
       console.error(error);
-      Alert.alert('An error occurred while placing the order');
+      Alert.alert("An error occurred while placing the order");
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -117,12 +116,11 @@ const Checkout = () => {
           onChangeText={setCvv}
         />
       </View>
-      <TouchableOpacity
-        style={styles.placeOrderButton}
-        onPress={handlePlaceOrder}
-      >
-        <Text style={styles.placeOrderText}>Place Order</Text>
-      </TouchableOpacity>
+      <View style={styles.view18}>
+        <TouchableOpacity onPress={handlePlaceOrder}>
+          <Text style={styles.text10}>Place Order</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -130,7 +128,8 @@ const Checkout = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 15,
+    paddingTop: 3,
     backgroundColor: "#fff",
   },
   header: {
@@ -167,8 +166,17 @@ const styles = StyleSheet.create({
   placeOrderText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
+    // color: "#fff",
   },
+  view18: {
+    backgroundColor: colors.buttons,
+    alignItems: "center",
+    paddingVertical: 5,
+    marginBottom: 0,
+    width: 200,
+    borderRadius: 12,
+  },
+  text10: { padding: 10, fontWeight: "bold", fontSize: 18, color: "white" },
 });
 
-export default Checkout;
+export default CheckoutScreen;

@@ -1,15 +1,11 @@
 import React, { useContext } from "react";
-
-import { View, Text, Alert, Switch, StyleSheet, Touchable } from "react-native";
-
+import { View, Text, Switch, StyleSheet, Touchable } from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
-
 import { Icon, Avatar } from "@rneui/base";
-
 import { colors } from "../global/style";
 import { SignInContext } from "../context/authContext";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -23,20 +19,20 @@ export default function DrawerContent(props) {
   // Create a state variable called isDarkMode with a default value of false, and a function called setIsDarkMode to update it
   const [isDarkMode, setIsDarkMode] = useState(false); // state variable to hold the value of the switch
   const [user, setUser] = useState({});
+
   useEffect(() => {
-   getPersistedAuth();
+    getPersistedAuth(); // Call the function to retrieve persisted authentication
   }, []);
 
   const getPersistedAuth = async () => {
-    const jsonValue = await AsyncStorage.getItem("auth");
+    const jsonValue = await AsyncStorage.getItem("auth"); // Retrieve the persisted authentication data from AsyncStorage
 
-    console.log("The value being returned from", jsonValue);
+    console.log("The value being returned from", jsonValue); // Log the value retrieved from AsyncStorage to the console
 
     if (jsonValue != null) {
-      setUser(user);
-      console.log("the user:",user);
+      setUser(JSON.parse(jsonValue)); // Update the user state with the retrieved user (This line seems to have a mistake, it should likely be setUser(jsonValue) or something similar)
     } else {
-      setUser({});
+      setUser({}); // Set the user state to an empty object when no persisted authentication is found
     }
   };
 
@@ -91,7 +87,7 @@ export default function DrawerContent(props) {
                   fontSize: 18,
                 }}
               >
-                {user.name + " " + user.family_name}
+                Ardita Hoti
               </Text>
               <Text style={{ color: colors.cardbackground, fontSize: 14 }}>
                 {/* Display user's email address here */}

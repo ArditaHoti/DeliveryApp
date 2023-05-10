@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "com.Hoti.DeliveryApp",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -16,12 +17,13 @@
     ],
     "ios": {
       "supportsTablet": true,
-        "config": {
-          "usesNonExemptEncryption": false
-        }
-   
+      "bundleIdentifier": "com.Hoti.DeliveryApp",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.Hoti.DeliveryApp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -29,6 +31,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "050595d2-2ed8-4828-899a-222fee28c51f"
+      }
     }
   }
 }

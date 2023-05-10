@@ -1,18 +1,11 @@
-// import React from "react";
-// import { View, Text, StyleSheet } from "react-native";
-
-
-// export default function MyOrdersScreen(){
-
-//     return(
-//         <View style={{flex:1, alignItems:"center", justifyContent:"center"}}>
-//             <Text>My Orders</Text>
-//         </View>
-//     )
-// }
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { colors } from '../global/style';
 
+
+// This is a React Native component called MyOrderScreen that renders a list of orders. 
+// It has a state that includes an array of objects, where each object represents an order 
+// with its own id, name, price, and quantity
 export default class MyOrderScreen extends Component {
   constructor(props) {
     super(props);
@@ -21,25 +14,27 @@ export default class MyOrderScreen extends Component {
         {
           id: 1,
           name: 'Cheeseburger',
-          price: '$5.99',
+          price: '£5.99',
           quantity: 2,
         },
         {
           id: 2,
           name: 'Fries',
-          price: '$2.99',
+          price: '£2.99',
           quantity: 1,
         },
         {
           id: 3,
           name: 'Milkshake',
-          price: '$3.99',
+          price: '£3.99',
           quantity: 1,
         },
       ],
     };
   }
-
+  // In the render method, the orders array is looped over using the map function, which returns a view for each order. 
+  // Each order view contains two child views: one for the order information (name and price) and one for the order quantity. 
+  // The key prop is set to order.id to help React identify each order view.
   render() {
     const { orders } = this.state;
     return (
@@ -52,7 +47,7 @@ export default class MyOrderScreen extends Component {
               <Text style={styles.orderPrice}>{order.price}</Text>
             </View>
             <View style={styles.orderQuantity}>
-              <Text style={styles.orderQuantityText}>{order.quantity}</Text>
+              <Text style={styles.orderQuantityText}> {order.quantity}</Text>
             </View>
           </View>
         ))}
@@ -91,13 +86,16 @@ const styles = StyleSheet.create({
   orderQuantity: {
     width: 40,
     height: 40,
-    backgroundColor: '#ccc',
+    backgroundColor: colors.buttons,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    marginLeft:5
+   
   },
   orderQuantityText: {
     fontSize: 18,
+    color:"white"
   },
 });
 

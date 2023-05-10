@@ -1,24 +1,24 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-
 import { Icon } from "@rneui/base";
-
-import { colors, parameters } from "../global/style";
+import { colors } from "../global/style";
 
 export default function FoodCard({
-  OnPressFoodCard,
-  restaurantName,
-  deliveryAvailable,
-  discountAvailable,
-  discountPercent,
-  numberOfReview,
-  businessAddress,
-  farAway,
-  averageReview,
-  images,
-  screenWidth,
+  OnPressFoodCard, // Function to handle the press event of the food card
+  restaurantName, // Name of the restaurant
+  deliveryAvailable, // Boolean indicating if delivery is available
+  discountAvailable, // Boolean indicating if a discount is available
+  discountPercent, // Percentage of discount
+  numberOfReview, // Number of reviews
+  businessAddress, // Address of the business
+  farAway, // Time it takes to reach the location
+  averageReview, // Average review rating
+  images, // Array of image URLs
+  screenWidth, // Width of the screen
 }) {
   return (
+    //this code defines a reusable food card component that can be used to display information about a
+    //restaurant, including its image, name, address, distance, average review rating, and number of reviews.
     <TouchableOpacity>
       <View style={{ ...styles.cardView, width: screenWidth }}>
         <Image

@@ -1,5 +1,5 @@
 import { Button, Icon, Text, SocialIcon, ButtonGroup } from "@rneui/base";
-import { React, useState, useRef, useContext } from "react";
+import { React, useState, useEffect, useRef, useContext } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 import Header from "../../components/Header";
 import { colors, parameters, title } from "../../global/style";
@@ -14,12 +14,76 @@ import {
 import { SignInContext } from "../../context/authContext";
 import { auth, provider } from "../../../config/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Google from "expo-auth-session/providers/google";
+import * as AuthSession from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
+// WebBrowser.maybeCompleteAuthSession();
+
+// The signIn function is defined using the async/await syntax to handle the user sign-in process.
+// It takes an object data containing the user's email and password, and then uses the Firebase
+// authentication service to sign in the user. If the sign-in is successful, it dispatches an action to update
+//  the user's signed-in status using the dispatchSignedIn function obtained from the SignInContext context.
+// Additionally, it saves the user's authentication data in AsyncStorage for persistence.
 
 export default function SignInScreen({ navigation }) {
+  const [userInfo, setUserInfo] = useState();
+  // const [auth, setAuth] = useState();
+  const [requireRefresh, setRequireRefresh] = useState(false);
+
+ 
   const { dispatchSignedIn } = useContext(SignInContext);
   const [textInput2Focussed, setTextInput2Focussed] = useState(false);
   const textInput1 = useRef(1);
   const textInput2 = useRef(2);
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+
+    androidClientId:
+      "789475744481-cfdo95cmv8fac4jgtbqkogcnk56ktck5.apps.googleusercontent.com",
+    // iosClientId: "789475744481-9cpap2hp01tp8mc0i2ek29t52vks1rif.apps.googleusercontent.com",
+    expoClientId:
+      "789475744481-qe0v2k4kllild1p0lrp7r231o7rbfgct.apps.googleusercontent.com",
+  });
+
+
+  console.log("This is the response from google" , response)
+
+  useEffect(() => {
+
+    if (response?.type === "success") {
+      setAuth(response.authentication);
+      console.log("This is the response authentication code",response.authentication);
+      const persistAuth = async () => {
+        await AsyncStorage.setItem(
+          "auth",
+          JSON.stringify(response.authentication)
+        );
+      };
+
+      persistAuth();
+    }
+  }, [response]);
+
+  useEffect(() => {
+
+    console.log("Hello I am in the second use effect")
+    const getPersistedAuth = async () => {
+      const jsonValue = await AsyncStorage.getItem("auth");
+      if (jsonValue != null) {
+        const authFromJson = JSON.parse(jsonValue);
+        setAuth(authFromJson); 
+        console.log(authFromJson);
+        setRequireRefresh(
+          !AuthSession.TokenResponse.isTokenFresh({
+            expiresIn: authFromJson.expiresIn,
+            issuedAt: authFromJson.issuedAt,
+          })
+        );
+      }
+    };
+
+    getPersistedAuth();
+  }, []);
 
   async function signIn(data) {
     try {
@@ -44,6 +108,66 @@ export default function SignInScreen({ navigation }) {
     }
   }
 
+
+  const getUserData = async () => {
+    let userInfoResponse = await fetch(
+      "https://www.googleapis.com/userinfo/v2/me",
+      {
+        headers: { Authorization: `Bearer ${auth.accessToken}` },
+      }
+    );
+    userInfoResponse.json().then((data) => {
+      // console.log(data);
+      setUserInfo(data);
+    });
+  };
+
+  const showUserData = () => {
+    if (userInfo) {
+      return (
+        <View style={styles.userInfo}>
+          {" "}
+          <Image source={{ uri: userInfo.picture }} style={styles.profilePic} />
+          <Text>Welcome {userInfo.name}</Text>{" "}
+          <Text>{userInfo.email}</Text>{" "}
+        </View>
+      );
+    }
+  };
+
+  const getClientId = () => {
+    if (Platform.OS === "ios") {
+      return "139581308140-imf4dv4bogf4aj945eosqvnett4mp06e.apps.googleusercontent.com";
+    } else if (Platform.OS === "android") {
+      return "139581308140-n3ebiqnid8tmskvneo7lck2cku8va9s3.apps.googleusercontent.com";
+    } else {
+      console.log("Invalid platform - not handled");
+    }
+  };
+
+  const refreshToken = async () => {
+    const clientId = getClientId();
+    console.log(auth);
+    const tokenResult = await AuthSession.refreshAsync(
+      {
+        clientId: clientId,
+        refreshToken: auth.refreshToken,
+      },
+      {
+        tokenEndpoint: "https://www.googleapis.com/oauth2/v4/token",
+      }
+    );
+
+    tokenResult.refreshToken = auth.refreshToken;
+    setAuth(tokenResult);
+    await AsyncStorage.setItem("auth", JSON.stringify(tokenResult));
+    setRequireRefresh(false);
+  };
+
+  const checkIfNeedsTobeRedirected = () => {
+    promptAsync({ useProxy: false, showInRecents: true });
+    console.log("I am inside the method of the button", auth);
+  };
   async function signInGoogle() {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -66,7 +190,7 @@ export default function SignInScreen({ navigation }) {
       // ...
     }
   }
-  
+
   return (
     <View style={styles.container}>
       <Header title="MY ACOONUT" type="arrow-left" navigation={navigation} />
@@ -179,7 +303,7 @@ export default function SignInScreen({ navigation }) {
           button
           type="google"
           style={styles.SocialIcon}
-          onPress={signInGoogle}
+          onPress={checkIfNeedsTobeRedirected}
         />
       </View>
 

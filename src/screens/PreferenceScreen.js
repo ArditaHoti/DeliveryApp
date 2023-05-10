@@ -67,6 +67,7 @@ export default class PreferenceScreen extends Component {
     // Returning the JSX to be rendered
     return (
       <View style={styles.container}>
+        {/* Checking if the menu data has been fetched */}
         {this.state.menuDetailedData.length > 0 && (
           <ScrollView>
             <View style={styles.header}>
@@ -91,6 +92,7 @@ export default class PreferenceScreen extends Component {
                 }}
               />
             </View>
+            {/* Meal name and details */}
             <View style={styles.view1}>
               <Text style={styles.text1}>
                 {this.state.menuDetailedData[index].meal}
@@ -99,12 +101,14 @@ export default class PreferenceScreen extends Component {
                 {this.state.menuDetailedData[index].details}
               </Text>
             </View>
+            {/* Meal type title */}
             <View style={styles.view2}>
               <Text style={styles.text3}>Choose a meal type</Text>
               <View style={styles.view3}>
                 <Text style={styles.text4}>REQUIRED</Text>
               </View>
             </View>
+            {/* Meal type title */}
             <View style={styles.view4}>
               <View style={styles.view5}>
                 <View style={styles.view6}>
@@ -123,16 +127,20 @@ export default class PreferenceScreen extends Component {
               </View>
             </View>
             <View>
+              {/* Iterating over the preference data to render each section */}
               {this.state.preference.map((item, mainIndex) => (
                 <View key={item.id}>
+                  {/* Title of the preference section */}
                   <View style={styles.view7}>
                     <Text style={styles.text8}>
+                      {/* Using the index of the current preference to get its corresponding title */}
                       {
                         this.state.menuDetailedData[index].preferenceTitle[
                           this.state.preference.indexOf(item)
                         ]
                       }
                     </Text>
+                     {/* Showing a "REQUIRED" badge if the preference is required */}
                     {this.state.required[
                       this.state.preference.indexOf(item)
                     ] && (
@@ -148,56 +156,58 @@ export default class PreferenceScreen extends Component {
                       </View>
                     )}
                   </View>
+                    {/* Options for the current preference */}
                   <View style={styles.view10}>
+                     {/* Iterating over the options data to render each option */}
                     {item.map((items, index) => (
                       <TouchableOpacity
                         key={index}
                         onPress={() => {
-                          if (this.state.minimum_quantity[mainIndex] !== null) {
-                            let counterTemp = this.state.counter;
-                            let tempState = this.state.preference;
-                            tempState[mainIndex].forEach((i) => {
-                              if (i.id === items.id) {
-                                if (
-                                  this.state.counter[mainIndex] <
-                                    this.state.minimum_quantity[mainIndex] ||
-                                  this.state.minimum_quantity[mainIndex] ===
-                                    undefined
-                                ) {
-                                  if (i.checked) {
-                                    i.checked = false;
-                                    counterTemp[mainIndex] =
-                                      counterTemp[mainIndex] - 1;
-                                    console.log(counterTemp);
-                                  } else {
-                                    i.checked = true;
-                                    counterTemp[mainIndex] =
-                                      counterTemp[mainIndex] + 1;
-                                  }
-                                } else if (i.checked) {
+                          let counterTemp = this.state.counter;
+
+                          let tempState = this.state.preference;
+
+                          tempState[mainIndex].forEach((i) => {
+                            if (i.id === items.id) {
+                              if (
+                                this.state.counter[mainIndex] <
+                                  this.state.minimum_quantity[mainIndex] ||
+                                this.state.minimum_quantity[mainIndex] ===
+                                  undefined
+                              ) {
+                                if (i.checked) {
                                   i.checked = false;
+
                                   counterTemp[mainIndex] =
                                     counterTemp[mainIndex] - 1;
-                                  console.log(counterTemp[mainIndex]);
-                                }
-                              }
-                            });
 
-                            this.setState({
-                              preference: tempState,
-                              counter: counterTemp,
-                            });
-                          } else {
-                            const preference = this.state.preference.slice();
-                            preference[index].forEach((i) => {
-                              if (i.id === item.id) {
-                                i.checked = !i.checked;
+                                  console.log(counterTemp);
+                                } else {
+                                  i.checked = true;
+
+                                  counterTemp[mainIndex] =
+                                    counterTemp[mainIndex] + 1;
+                                }
+                              } else if (i.checked) {
+                                i.checked = false;
+
+                                counterTemp[mainIndex] =
+                                  counterTemp[mainIndex] - 1;
+
+                                console.log(counterTemp[mainIndex]);
                               }
-                            });
-                            this.setState({
-                              preference: preference,
-                            });
-                          }
+                            }
+                          });
+
+                          this.setState((prev) => {
+                            return {
+                              ...prev,
+
+                              preference: tempState,
+
+                              counter: counterTemp,
+                            };
+                          });
                         }}
                       >
                         <View style={styles.view4}>
@@ -257,7 +267,7 @@ export default class PreferenceScreen extends Component {
         <View style={styles.view17}>
           <View style={styles.view18}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("CheckoutScreen")}
+              onPress={() => navigation.navigate("ViewCartScreen")}
             >
               <Text style={styles.text10}>Add 1 to Cart </Text>
             </TouchableOpacity>

@@ -37,7 +37,7 @@ export default function RootClientTabs() {
       />
 
       <ClientTabs.Screen
-        name="SearchScreen"
+        name="Search"
         component={ClientStack}
         options={{
           tabBarLabel: "Search",

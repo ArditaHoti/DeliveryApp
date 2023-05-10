@@ -13,7 +13,6 @@ export default function SignInWelcomeScreen({ navigation }) {
   const { dispatchSignedIn } = useContext(SignInContext);
   const auth = getAuth();
   const user = auth.currentUser;
-  console.log("filterDataRef:", filterDataRef);
   const getPersistedAuth = async () => {
     const jsonValue = await AsyncStorage.getItem("auth");
 

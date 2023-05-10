@@ -1,15 +1,18 @@
-import { StyleSheet, Text, View , TouchableOpacity} from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Icon } from "@rneui/base";
-//import { specialData, menuData} from "../../global/data";
 import { colors } from "../../global/style";
 import { menuDataRef, specialDataRef } from "../../../config/firebase";
 import { onValue } from "firebase/database";
 
-const MenuScreen = ({navigation,restaurant,onPress}) => {
+// A functional component called MenuScreen that takes in a prop called onPress.
+// It uses the useState hook to initialize and update two arrays called specialData and menuData.
+// The useEffect hook is used to fetch and set the data from two Firebase Realtime Database references
+// called specialDataRef and menuDataRef respectively.
 
+const MenuScreen = ({ onPress }) => {
 
-
+  // Special Data Include Limited Offer, Go Chesse etc
   const [specialData, setspecialData] = useState([]);
   useEffect(() => {
     onValue(specialDataRef, (snapshot) => {
@@ -20,7 +23,7 @@ const MenuScreen = ({navigation,restaurant,onPress}) => {
       setspecialData(dataArray);
     });
   }, []);
-
+// menu data include Beef, Chicken etc
   const [menuData, setmenuData] = useState([]);
   useEffect(() => {
     onValue(menuDataRef, (snapshot) => {
@@ -31,9 +34,7 @@ const MenuScreen = ({navigation,restaurant,onPress}) => {
       setmenuData(dataArray);
     });
   }, []);
-  const handlePress = () => {
-    // navigation.navigate("PrductSec")
-  }
+
   return (
     <View style={styles.container}>
       <View>

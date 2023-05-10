@@ -1,15 +1,23 @@
-import { StyleSheet, Text, View, ImageBackground , Animated} from "react-native";
-import {React, useState, useEffect} from "react";
-//import { restaurantsData } from "../global/data";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Animated,
+} from "react-native";
+import { React, useState, useEffect } from "react";
 import { colors } from "../global/style";
 import { Icon } from "@rneui/base";
 import { restaurantsDataRef } from "../../config/firebase";
 import { onValue } from "firebase/database";
 
-export default function RestaurantHeader({ navigation, id }) {
+// this code represents a header component for a restaurant screen,
+// displaying an image background, navigation icons, and a like button with animation
 
+export default function RestaurantHeader({ navigation, id }) {
   const [restaurantsData, setrestaurantsData] = useState([]);
   useEffect(() => {
+    // Fetch restaurants data from the database
     onValue(restaurantsDataRef, (snapshot) => {
       const data = snapshot.val();
       const dataArray = Object.keys(data).map((key) => {
@@ -18,39 +26,38 @@ export default function RestaurantHeader({ navigation, id }) {
       setrestaurantsData(dataArray);
     });
   }, []);
+  // Animation-related variables
+  const index2 = 10;
+  const currentValue = new Animated.Value(1);
+  const [liked, setLiked] = useState(false);
+  const [counter, setCounter] = useState(-2);
+  const [visible, setVisible] = useState(false);
 
-    const index2 = 10
-    const currentValue = new Animated.Value(1)
-    const [liked,setLiked] = useState(false)
-    const [counter,setCounter] = useState(-2)
-    const [visible, setVisible] = useState(false)
+  const likeHander = () => {
+    if (liked == false) setVisible(true);
 
-    const likeHander =()=>{
-        if(liked == false)
-                setVisible(true)
+    setLiked(!liked);
+    setCounter(index2);
+  };
 
-        setLiked(!liked)
-        setCounter(index2)
+  useEffect(() => {
+    if (liked == true) {
+      Animated.spring(currentValue, {
+        toValue: 3,
+        friction: 2,
+        useNativeDriver: true,
+      }).start(() => {
+        Animated.spring(currentValue, {
+          toValue: 1,
+          useNativeDriver: true,
+          friction: 2,
+        }).start(() => {
+          setVisible(false);
+        });
+      });
     }
-
-    useEffect(()=>{
-        if(liked == true){
-            Animated.spring(currentValue,{
-                toValue:3,
-                friction:2,
-                useNativeDriver:true
-            }).start(()=>{
-                Animated.spring(currentValue,{
-                    toValue:1,
-                    useNativeDriver:true,
-                    friction:2
-                }).start(()=>{
-                    setVisible(false)
-                })
-            })
-        }
-    },[liked])
-      // Check if restaurantsData has an object at index 'id'
+  }, [liked]);
+  // Check if restaurantsData has an object at index 'id'
   if (!restaurantsData[id]) {
     return null; // Return null or any other component to indicate loading/error state
   }
@@ -59,7 +66,7 @@ export default function RestaurantHeader({ navigation, id }) {
     <View style={styles.container}>
       <ImageBackground
         style={styles.container}
-        source={{uri:restaurantsData[id].images}}
+        source={{ uri: restaurantsData[id].images }}
       >
         <View style={styles.view1}>
           <View style={styles.view2}>
@@ -77,7 +84,7 @@ export default function RestaurantHeader({ navigation, id }) {
               type="material"
               color="red"
               size={30}
-              onPress ={likeHander}
+              onPress={likeHander}
             />
           </View>
         </View>

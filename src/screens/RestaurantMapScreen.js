@@ -1,7 +1,9 @@
 import React from "react";
-
-import { View, Text, StyleSheet } from "react-native";
+import { View } from "react-native";
 import MapView from "react-native-maps";
+
+// This component renders a MapView using the "react-native-maps" library.
+// The MapView is configured with an initial region that specifies the starting coordinates and zoom level of the map.
 
 export default function RestaurantMapScreen() {
   return (

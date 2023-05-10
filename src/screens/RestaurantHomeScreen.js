@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { React, useEffect, useState } from "react";
 import { colors, fonts } from "../global/style";
 import RestaurantHeader from "../components/RestaurantHeader";
@@ -12,15 +6,22 @@ import { TabBar, TabView } from "react-native-tab-view";
 import { Icon } from "@rneui/base";
 import { ScrollView } from "react-native-gesture-handler";
 import MenuScreen from "./RestaurantTabs/MenuScreen";
-import { Modal } from "react-native";
 import { menuRef, restaurantsDataRef } from "../../config/firebase";
 import { onValue } from "firebase/database";
 
+// Get the width of the screen
 const SCREEN_WIDTH = Dimensions.get("window").width;
+
+// Define a layout for the initial screen
 const initialLayout = SCREEN_WIDTH;
 
+// Define the main component of the screen
 const RestaurantHomeScreen = ({ navigation, route }) => {
+  // Define states for the data
   const [restaurantsData, setrestaurantsData] = useState([]);
+  const [menu, setmenu] = useState([]);
+
+  // Use Firebase's onValue listener to get the data for restaurants and menus
   useEffect(() => {
     onValue(restaurantsDataRef, (snapshot) => {
       const data = snapshot.val();
@@ -31,7 +32,6 @@ const RestaurantHomeScreen = ({ navigation, route }) => {
     });
   }, []);
 
-  const [menu, setmenu] = useState([]);
   useEffect(() => {
     onValue(menuRef, (snapshot) => {
       const data = snapshot.val();
@@ -42,7 +42,10 @@ const RestaurantHomeScreen = ({ navigation, route }) => {
     });
   }, []);
 
+  // Get the ID and name of the restaurant from the route
   const { id, restaurant } = route.params;
+
+  // Define routes for the different tabs
   const [routes] = useState([
     { key: "first", title: "MENU" },
     { key: "second", title: "INFO" },
@@ -50,12 +53,13 @@ const RestaurantHomeScreen = ({ navigation, route }) => {
     { key: "fourth", title: "GALLERY" },
   ]);
 
+  // Define routes for the menu tabs
   const [routes2] = useState(menu);
 
+  // Set the index for the tab view
   const [index, setIndex] = useState(0);
 
-  const [index2, setIndex2] = useState(0);
-  const [modalVisible, setModalVisible] = useState(false);
+  // Define how the tab bar should be rendered
   const renderTabBar = (props) => (
     <TabBar
       {...props}
@@ -67,22 +71,13 @@ const RestaurantHomeScreen = ({ navigation, route }) => {
       contentContainerStyle={styles.tabContainer}
     />
   );
-  const renderTabBar2 = (props) => (
-    <TabBar
-      {...props}
-      indicatorStyle={{ backgroundColor: colors.cardbackground }}
-      tabStyle={styles.tabStyle}
-      scrollEnabled={true}
-      style={styles.tab}
-      labelStyle={styles.tabLabel}
-      contentContainerStyle={styles.tabContainer}
-    />
-  );
 
+  // Define a function that renders the scene for the first tab
   const UpdateRoute1 = () => {
     return <View></View>;
   };
 
+  // Define a function that is called when the menu button is pressed
   const menuPressed = () => {
     navigation.navigate("MenuProductScreen");
   };
@@ -178,17 +173,6 @@ const RestaurantHomeScreen = ({ navigation, route }) => {
 
         {index === 0 && <MenuScreen onPress={menuPressed} />}
       </ScrollView>
-
-      <TouchableOpacity>
-        <View style={styles.view11}>
-          <View style={styles.view12}>
-            <Text style={styles.text13}>View Cart</Text>
-            <View style={styles.view13}>
-              <Text style={styles.text13}>0</Text>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
     </View>
   );
 };

@@ -7,7 +7,8 @@ import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
 import MenuProductScreen from "../screens/MenuProductScreen";
 import PreferenceScreen from "../screens/PreferenceScreen";
-import Checkout from "../screens/CheckoutScreen"
+import ViewCartScreen from "../screens/ViewCartScreen";
+import CheckoutScreen from "../screens/CheckoutScreen"
 
 const ClientSearch = createNativeStackNavigator();
 
@@ -62,13 +63,23 @@ export function ClientStack({ navigation, route }) {
           headerShown: false,
         })}
       />
+
       <ClientSearch.Screen
-        name="CheckoutScreen"
-        component={Checkout}
+        name="ViewCartScreen"
+        component={ViewCartScreen}
         options={() => ({
           headerShown: false,
         })}
       />
+
+      <ClientSearch.Screen
+        name="CheckoutScreen"
+        component={CheckoutScreen}
+        options={() => ({
+          headerShown: false,
+        })}
+      />
+      
     </ClientSearch.Navigator>
   );
 }
