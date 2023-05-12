@@ -7,12 +7,15 @@ import {
   ImageBackground,
   Dimensions,
   TouchableWithoutFeedback,
-  ImageBackgroundComponent,
 } from "react-native";
 import SearchComponent from "../components/SearchComponent";
 import { onValue } from "firebase/database";
 import { colors } from "../global/style";
 import { filterData2Ref } from "../../config/firebase";
+// This code displays a list of categories. It fetches the category data from Firebase and displays it in a FlatList component.
+// Each item in the list is a clickable image that takes the user to a search result screen for that category.
+// The screen also includes a search component and a footer section that displays more categories.
+// The code also includes styles for the components used in the screen.
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -62,7 +65,7 @@ export default function SearchScreen({ navigation }) {
             ListHeaderComponent={
               <Text style={styles.listHeader}>Top Categories</Text>
             }
-            ListFooterComponent={<Footer />}
+            ListFooterComponent={<Footer navigation={navigation} />}
           />
         </View>
       </View>
@@ -70,7 +73,7 @@ export default function SearchScreen({ navigation }) {
   );
 }
 
-const Footer = () => {
+const Footer = ({ navigation }) => {
   const [filterData2, setFilterData2] = useState([]);
   useEffect(() => {
     onValue(filterData2Ref, (snapshot) => {

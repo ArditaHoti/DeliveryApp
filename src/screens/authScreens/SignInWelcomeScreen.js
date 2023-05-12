@@ -8,8 +8,10 @@ import { auth, filterDataRef } from "../../../config/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getAuth } from "firebase/auth";
 
+// The code is a React Native screen component that displays a welcome screen for a restaurant discovery app.
+//It includes a Swiper component that displays images of restaurants, and buttons to either sign in or create an account.
+//The component also checks if the user is already signed in, and navigates to the appropriate screen based on the result.
 export default function SignInWelcomeScreen({ navigation }) {
-
   const { dispatchSignedIn } = useContext(SignInContext);
   const auth = getAuth();
   const user = auth.currentUser;

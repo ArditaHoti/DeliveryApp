@@ -8,7 +8,10 @@ import { useLayoutEffect } from "react";
 import MenuProductScreen from "../screens/MenuProductScreen";
 import PreferenceScreen from "../screens/PreferenceScreen";
 import ViewCartScreen from "../screens/ViewCartScreen";
-import CheckoutScreen from "../screens/CheckoutScreen"
+import CheckoutScreen from "../screens/CheckoutScreen";
+
+//this code provides a multi-screen user interface for the client side of the food ordering app,
+//with the ability to navigate between different screens and hide the tab bar as needed.
 
 const ClientSearch = createNativeStackNavigator();
 
@@ -79,7 +82,6 @@ export function ClientStack({ navigation, route }) {
           headerShown: false,
         })}
       />
-      
     </ClientSearch.Navigator>
   );
 }

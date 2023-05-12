@@ -178,7 +178,6 @@ export default function SignInScreen({ navigation }) {
       // The signed-in user info.
       const user = result.user;
       // IdP data available using getAdditionalUserInfo(result)
-      // ...
     } catch (error) {
       // Handle Errors here.
       const errorCode = error.code;
@@ -187,7 +186,6 @@ export default function SignInScreen({ navigation }) {
       const email = error.customData.email;
       // The AuthCredential type that was used.
       const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
     }
   }
 
